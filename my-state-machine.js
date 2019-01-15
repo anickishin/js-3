@@ -47,8 +47,10 @@ export class machine {
             currentEvent.service(data);
             stack.shift();
         } else if (currentEvent["target"]) {
+            stack.unshift(this);
             const [state, setState] = useState();
             setState(currentEvent.target);
+            stack.shift();
         }
     }
 
@@ -64,7 +66,7 @@ export function useContext() {
             } else {
                 Object.assign(machineObj.context, context);
             }
-        }
+        };
 
         return [machineObj.context, setContext];
     } else {

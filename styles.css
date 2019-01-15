@@ -1,0 +1,105 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    height: 100%;
+}
+
+.page_body {
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -moz-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    background: rgba(200, 200, 200, 0.8);
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(rgba(200, 200, 200, 0.8)));
+    background: -webkit-linear-gradient(top, #fff, rgba(200, 200, 200, 0.8));
+    background: -moz-linear-gradient(top, #fff, rgba(200, 200, 200, 0.8));
+    background: -o-linear-gradient(top, #fff, rgba(200, 200, 200, 0.8));
+    background: linear-gradient(180deg, #fff, rgba(200, 200, 200, 0.8));
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    left: 0;
+    min-height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
+
+.form_body {
+    -webkit-box-align: stretch;
+    -webkit-align-items: stretch;
+    -moz-box-align: stretch;
+    -ms-flex-align: stretch;
+    align-items: stretch;
+    background: #fff;
+    border: 1px solid #777;
+    border-radius: 5px;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+    -moz-box-orient: vertical;
+    -moz-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -moz-box-pack: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.city-input {
+    border: 1px solid #777;
+    border-radius: 2px;
+    font-size: 20px;
+    height: 40px;
+    padding: 5px;
+    width: 50vw;
+}
+
+.city-input:hover {
+    border: 1px solid #19ac62;
+    outline: 0;
+}
+
+.city-input:focus {
+    border: 1px solid #19ac62;
+    box-shadow: 0 0 10px rgba(25,172,98,0.5);
+    outline: 0;
+}
+
+.city-selector {
+    font-size: 15px;
+    padding-top: 5px;
+}
+
+.city-selector__item {
+    cursor: pointer;
+    display: block;
+    padding: 5px;
+}
+
+.city-selector__item_current {
+    background-color: #19ac62;
+    color: #fff;
+}
