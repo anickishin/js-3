@@ -11,7 +11,6 @@ const helperMachine = new machine({
         selectorElement: selectorElement,
         findValue: '',
         responseTowns: [],
-        selectorTarget: '',
         selection: '',
         itemClassName: 'city-selector__item',
         itemActiveClassName: 'city-selector__item_current'
@@ -33,53 +32,64 @@ const helperMachine = new machine({
                 },
                 TARGETING: {
                     service: (event) => {
-                        const [context, setContext] = useContext();
+                        const [context] = useContext();
                         if (event.selectorTarget.className === context.itemClassName) {
                             event.selectorTarget.classList.add(context.itemActiveClassName);
-                            setContext({selectorTarget: event.selectorTarget});
                         }
                     }
                 },
                 UNTARGETING: {
                     service: (event) => {
-                        const [context, setContext] = useContext();
-                        if (context.selectorTarget) {
-                            context.selectorTarget.classList.remove(context.itemActiveClassName);
-                            setContext({selectorTarget: ''});
+                        const [context] = useContext();
+                        const selectorTarget = document.querySelector(`.${context.itemActiveClassName}`);
+                        if (selectorTarget) {
+                            selectorTarget.classList.remove(context.itemActiveClassName);
                         }
                     }
                 },
                 DOWNTARGET: {
                     service: (event) => {
-                        const [context, setContext] = useContext();
-                        if (context.selectorTarget) {
-                            context.selectorTarget.classList.remove(context.itemActiveClassName);
-                            setContext({selectorTarget: context.selectorTarget.nextElementSibling});
+                        const [context] = useContext();
+                        let selectorTarget = document.querySelector(`.${context.itemActiveClassName}`);
+                        if (selectorTarget) {
+                            selectorTarget.classList.remove(context.itemActiveClassName);
+                            selectorTarget = selectorTarget.nextElementSibling;
                         } else {
-                            setContext({selectorTarget: context.selectorElement.firstElementChild});
+                            selectorTarget = context.selectorElement.firstElementChild;
                         }
-                        context.selectorTarget.classList.add(context.itemActiveClassName);
+                        if (selectorTarget) {
+                            selectorTarget.classList.add(context.itemActiveClassName);
+                        }
                     }
                 },
                 UPTARGET: {
                     service: (event) => {
-                        const [context, setContext] = useContext();
-                        if (context.selectorTarget) {
-                            context.selectorTarget.classList.remove(context.itemActiveClassName);
-                            setContext({selectorTarget: context.selectorTarget.previousElementSibling});
+                        const [context] = useContext();
+                        let selectorTarget = document.querySelector(`.${context.itemActiveClassName}`);
+                        if (selectorTarget) {
+                            selectorTarget.classList.remove(context.itemActiveClassName);
+                            selectorTarget = selectorTarget.previousElementSibling;
                         } else {
-                            setContext({selectorTarget: context.selectorElement.lastElementChild});
+                            selectorTarget = context.selectorElement.lastElementChild;
                         }
-                        context.selectorTarget.classList.add(context.itemActiveClassName);
+                        if (selectorTarget) {
+                            selectorTarget.classList.add(context.itemActiveClassName);
+                        }
                     }
                 },
                 CHOOSE: {
                     service: (event) => {
                         const [context, setContext] = useContext();
                         const [state, setState] = useState();
-                        if (context.selectorTarget) {
-                            setContext({selection: context.selectorTarget});
-                            context.inputElement.value = context.selection.innerHTML;
+                        const selectorTarget = document.querySelector(`.${context.itemActiveClassName}`);
+                        if (selectorTarget) {
+                            setContext({
+                                selection: {
+                                    id: selectorTarget.id,
+                                    title: selectorTarget.innerHTML
+                                }
+                            });
+                            context.inputElement.value = context.selection.title;
                             setState('selected');
                         }
                     }
@@ -143,6 +153,7 @@ const helperMachine = new machine({
                 for (let i = 0; i < context.responseTowns.length; i++) {
                     let li = document.createElement("li");
                     li.appendChild(document.createTextNode(context.responseTowns[i].text));
+                    li.setAttribute('id', context.responseTowns[i].id);
                     li.className = context.itemClassName;
                     context.selectorElement.appendChild(li);
                 }
