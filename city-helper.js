@@ -112,13 +112,14 @@ const helperMachine = new machine({
             li.appendChild(document.createTextNode('Введите не менее 2 символов'));
             li.setAttribute('class', 'city-selector__item');
             context.selectorElement.appendChild(li);
+            context.selectorElement.style.display = 'block';
         },
         clearSelector() {
             const [context] = useContext();
             while (context.selectorElement.firstElementChild) {
                 context.selectorElement.removeChild(context.selectorElement.firstElementChild);
             }
-            context.selectorElement.display = 'none'
+            context.selectorElement.style.display = 'none';
         },
         fetching() {
             const [context, setContext] = useContext();
@@ -161,6 +162,7 @@ const helperMachine = new machine({
                 li.setAttribute('class', 'city-selector__item');
                 context.selectorElement.appendChild(li);
             }
+            context.selectorElement.style.display = 'block';
         }
     }
 });
