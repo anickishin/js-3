@@ -10,6 +10,7 @@ export const fetchingMachineBody = {
                 FETCH: {
                     service: (event) => {
                         const [context, setContext] = useContext();
+                        const [state, setState] = useState();
                         setContext({id: event.id, parent: event.parent});
                         window.fetch(event.url)
                             .then((response) => {
@@ -19,7 +20,9 @@ export const fetchingMachineBody = {
                                 return response.json();
                             })
                             .then((data) => {
-                                const [state, setState] = useState();
+                                if (data.items.length === 0) {
+                                    throw new Error('Соответствий не найдено');
+                                }
                                 setContext({responseData: data.items});
                                 setState('ok');
                             })
@@ -38,4 +41,4 @@ export const fetchingMachineBody = {
         }
     },
     actions: {}
-}
+};

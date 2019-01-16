@@ -2,7 +2,7 @@ import {useState} from './my-state-machine.js'
 
 export const focusMachineBody = {
     id: 'focus',
-    initialState: 'inFocus',
+    initialState: 'notInFocus',
     context: {},
     states: {
         inFocus: {
@@ -31,4 +31,4 @@ export const focusMachineBody = {
         }
     },
     actions: {}
-}
+};
