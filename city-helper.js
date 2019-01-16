@@ -120,14 +120,14 @@ const helperMachine = new machine({
         fetching() {
             const [context, setContext] = useContext();
             const [state, setState] = useState();
-            if (context.inputElement.value.length < 2) {
+            const inputValue = context.inputElement.value;
+            if (inputValue.trim().length < 2) {
                 let li = document.createElement('li');
                 li.appendChild(document.createTextNode('Введите не менее 2 символов'));
                 li.className = context.itemClassName;
                 context.selectorElement.appendChild(li);
                 context.selectorElement.style.display = 'block';
             } else {
-                const inputValue = context.inputElement.value;
                 if (context.findValue !== inputValue || context.responseTowns.length === 0) {
                     setContext({findValue: inputValue});
                     window.fetch(`https://api.hh.ru/suggests/areas?text=${inputValue}`)
