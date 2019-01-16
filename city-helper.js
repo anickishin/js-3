@@ -8,6 +8,7 @@ const helperMachine = new machine({
     initialState: 'notActive',
     context: {
         inputElement: inputElement,
+        inputInFocus: true,
         selectorElement: selectorElement,
         findValue: '',
         responseTowns: [],
@@ -21,6 +22,22 @@ const helperMachine = new machine({
             on: {
                 EDIT: {
                     target: 'notActive',
+                },
+                FOCUS: {
+                    service: (event) => {
+                        const [context, setContext] = useContext();
+                        if (context.selectorElement.firstElementChild) {
+                            context.selectorElement.style.display = 'block';
+                            setContext({inputInFocus: true});
+                        }
+                    }
+                },
+                UNFOCUS: {
+                    service: (event) => {
+                        const [context, setContext] = useContext();
+                        context.selectorElement.style.display = 'none';
+                        setContext({inputInFocus: false});
+                    }
                 }
             }
         },
@@ -93,6 +110,24 @@ const helperMachine = new machine({
                             setState('selected');
                         }
                     }
+                },
+                FOCUS: {
+                    service: (event) => {
+                        const [context, setContext] = useContext();
+                        if (context.selectorElement.firstElementChild) {
+                            context.selectorElement.style.display = 'block';
+                            setContext({inputInFocus: true});
+                        }
+                    }
+                },
+                UNFOCUS: {
+                    service: (event) => {
+                        const [context, setContext] = useContext();
+                        if (!event.target.classList.contains(context.itemClassName)) {
+                            context.selectorElement.style.display = 'none';
+                            setContext({inputInFocus: false});
+                        }
+                    }
                 }
             }
         },
@@ -100,7 +135,7 @@ const helperMachine = new machine({
             onEntry: 'clearSelector',
             onExit() {
                 const [context, setContext] = useContext();
-                setContext('selection', '');
+                setContext({selection: ''});
             },
             on: {
                 EDIT: {
@@ -126,7 +161,9 @@ const helperMachine = new machine({
                 li.appendChild(document.createTextNode('Введите не менее 2 символов'));
                 li.className = context.itemClassName;
                 context.selectorElement.appendChild(li);
-                context.selectorElement.style.display = 'block';
+                if (context.inputInFocus) {
+                    context.selectorElement.style.display = 'block';
+                }
             } else {
                 if (context.findValue !== inputValue || context.responseTowns.length === 0) {
                     setContext({findValue: inputValue});
@@ -151,7 +188,9 @@ const helperMachine = new machine({
                             li.appendChild(document.createTextNode('Ошибка при получении данных'));
                             li.className = context.itemClassName;
                             context.selectorElement.appendChild(li);
-                            context.selectorElement.style.display = 'block';
+                            if (context.inputInFocus) {
+                                context.selectorElement.style.display = 'block';
+                            }
                         });
                 } else {
                     setState('Active');
@@ -175,8 +214,20 @@ const helperMachine = new machine({
                 li.className = context.itemClassName;
                 context.selectorElement.appendChild(li);
             }
-            context.selectorElement.style.display = 'block';
+            if (context.inputInFocus) {
+                context.selectorElement.style.display = 'block';
+            }
         }
+    }
+});
+
+inputElement.addEventListener('focusin', (e) => {
+    helperMachine.transition('FOCUS', e);
+});
+
+addEventListener('click', (e) => {
+    if (e.target !== inputElement) {
+        helperMachine.transition('UNFOCUS', e);
     }
 });
 
@@ -187,6 +238,9 @@ inputElement.addEventListener('keydown', (e) => {
             break;
         case 'ArrowUp':
             helperMachine.transition('UPTARGET', e);
+            break;
+        case 'Tab':
+            helperMachine.transition('UNFOCUS', e);
             break;
     }
 });
@@ -225,5 +279,6 @@ selectorElement.addEventListener("mouseover", (e) => {
 selectorElement.addEventListener('click', (e) => {
     if (e.target instanceof Element) {
         helperMachine.transition('CHOOSE', e);
+        e.stopPropagation();
     }
 });
