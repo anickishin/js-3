@@ -187,6 +187,10 @@ inputElement.addEventListener('keyup', (e) => {
         case 'Enter':
             helperMachine.transition('CHOOSE', e);
             break;
+        case 'ArrowLeft':
+            break;
+        case 'ArrowRight':
+            break;
         default:
             helperMachine.transition('EDIT', e);
             break;
