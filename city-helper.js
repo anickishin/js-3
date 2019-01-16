@@ -16,26 +16,18 @@ const helperMachine = new machine({
     },
     states: {
         notActive: {
-            onEntry: ['clearSelector', 'showHint'],
+            onEntry: ['clearSelector', 'fetching'],
             on: {
                 EDIT: {
-                    target: 'Active',
+                    target: 'notActive',
                 }
             }
         },
         Active: {
-            onEntry: ['clearSelector', 'fetching'],
-            on: {
-                EDIT: {
-                    target: 'Active',
-                }
-            }
-        },
-        choosing: {
             onEntry: 'fillSelector',
             on: {
                 EDIT: {
-                    target: 'Active',
+                    target: 'notActive',
                 },
                 TARGETING: {
                     service: (event) => {
@@ -100,20 +92,12 @@ const helperMachine = new machine({
             },
             on: {
                 EDIT: {
-                    target: 'Active',
+                    target: 'notActive',
                 }
             }
         }
     },
     actions: {
-        showHint() {
-            const [context] = useContext();
-            let li = document.createElement('li');
-            li.appendChild(document.createTextNode('Введите не менее 2 символов'));
-            li.setAttribute('class', 'city-selector__item');
-            context.selectorElement.appendChild(li);
-            context.selectorElement.style.display = 'block';
-        },
         clearSelector() {
             const [context] = useContext();
             while (context.selectorElement.firstElementChild) {
@@ -125,7 +109,11 @@ const helperMachine = new machine({
             const [context, setContext] = useContext();
             const [state, setState] = useState();
             if (context.inputElement.value.length < 2) {
-                setState('notActive');
+                let li = document.createElement('li');
+                li.appendChild(document.createTextNode('Введите не менее 2 символов'));
+                li.setAttribute('class', 'city-selector__item');
+                context.selectorElement.appendChild(li);
+                context.selectorElement.style.display = 'block';
             } else {
                 const inputValue = context.inputElement.value;
                 if (context.findValue !== inputValue) {
@@ -139,10 +127,10 @@ const helperMachine = new machine({
                         }
                     }).then((Towns) => {
                         setContext({responseTowns: Towns.items});
-                        setState('choosing');
+                        setState('Active');
                     });
                 } else {
-                    setState('choosing');
+                    setState('Active');
                 }
             }
         },
