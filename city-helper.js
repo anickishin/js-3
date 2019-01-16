@@ -1,7 +1,7 @@
 import {machine, useContext, useState} from './my-state-machine.js'
 
-let inputElement = document.querySelector(".city-input");
-let selectorElement = document.querySelector(".city-selector");
+const inputElement = document.querySelector(".city-input");
+const selectorElement = document.querySelector(".city-selector");
 
 const helperMachine = new machine({
     id: 'city-helper',
