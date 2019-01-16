@@ -130,7 +130,7 @@ const helperMachine = new machine({
                 const inputValue = context.inputElement.value;
                 if (context.findValue !== inputValue || context.responseTowns.length === 0) {
                     setContext({findValue: inputValue});
-                    window.fetch('https://api.hh.ru/suggests/areas?text=' + inputValue)
+                    window.fetch(`https://api.hh.ru/suggests/areas?text=${inputValue}`)
                         .then((response) => {
                             if (context.findValue === inputValue) {
                                 if (response.status !== 200) {
