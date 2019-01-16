@@ -25,7 +25,7 @@ const helperMachine = new machine({
             }
         },
         Active: {
-            onEntry: 'fillSelector',
+            onEntry: ['clearSelector', 'fillSelector'],
             on: {
                 EDIT: {
                     target: 'notActive',
@@ -128,19 +128,31 @@ const helperMachine = new machine({
                 context.selectorElement.style.display = 'block';
             } else {
                 const inputValue = context.inputElement.value;
-                if (context.findValue !== inputValue) {
+                if (context.findValue !== inputValue || context.responseTowns.length === 0) {
                     setContext({findValue: inputValue});
-                    window.fetch('https://api.hh.ru/suggests/areas?text=' + inputValue).then((response) => {
-                        if (context.findValue === inputValue) {
-                            if (response.status !== 200) {
-                                throw new Error("Fetch error.");
+                    window.fetch('https://api.hh.ru/suggests/areas?text=' + inputValue)
+                        .then((response) => {
+                            if (context.findValue === inputValue) {
+                                if (response.status !== 200) {
+                                    throw new Error("Fetch error.");
+                                }
+                                return response.json();
                             }
-                            return response.json();
-                        }
-                    }).then((Towns) => {
-                        setContext({responseTowns: Towns.items});
-                        setState('Active');
-                    });
+                        })
+                        .then((Towns) => {
+                            setContext({responseTowns: Towns.items});
+                            setState('Active');
+                        })
+                        .catch((err) => {
+                            while (context.selectorElement.firstElementChild) {
+                                context.selectorElement.removeChild(context.selectorElement.firstElementChild);
+                            }
+                            let li = document.createElement('li');
+                            li.appendChild(document.createTextNode('Ошибка при получении данных'));
+                            li.className = context.itemClassName;
+                            context.selectorElement.appendChild(li);
+                            context.selectorElement.style.display = 'block';
+                        });
                 } else {
                     setState('Active');
                 }
