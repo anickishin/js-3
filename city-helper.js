@@ -1,5 +1,6 @@
 import {machine, useContext, useState} from './my-state-machine.js'
 import {focusMachineBody} from "./focus-machine.js";
+import {fetchingMachineBody} from "./fetching-machine.js";
 
 const inputMinLength = 2;
 const inputElement = document.querySelector(".city-input");
@@ -25,6 +26,31 @@ const helperMachine = new machine({
             on: {
                 EDIT: {
                     target: 'notActive',
+                },
+                FETCH_SUCCESS: {
+                    service: (event) => {
+                        const [context, setContext] = useContext();
+                        if (event.id === context.findValue) {
+                            const [state, setState] = useState();
+                            setContext({responseTowns: event.data});
+                            setState('Active');
+                        }
+                    }
+                },
+                FETCH_ERROR: {
+                    service: (event) => {
+                        const [context] = useContext();
+                        while (context.selectorElement.firstElementChild) {
+                            context.selectorElement.removeChild(context.selectorElement.firstElementChild);
+                        }
+                        let li = document.createElement('li');
+                        li.appendChild(document.createTextNode(event.text));
+                        li.className = context.itemClassName;
+                        context.selectorElement.appendChild(li);
+                        if (context.inputInFocus) {
+                            context.selectorElement.style.display = 'block';
+                        }
+                    }
                 }
             }
         },
@@ -123,46 +149,18 @@ const helperMachine = new machine({
         },
         fetching() {
             const [context, setContext] = useContext();
-            const [state, setState] = useState();
             const inputValue = context.inputElement.value;
             if (inputValue.trim().length < inputMinLength) {
-                let li = document.createElement('li');
-                li.appendChild(document.createTextNode(`Введите не менее ${inputMinLength} символов`));
-                li.className = context.itemClassName;
-                context.selectorElement.appendChild(li);
-                if (context.inputInFocus) {
-                    context.selectorElement.style.display = 'block';
-                }
+                helperMachine.transition('FETCH_ERROR', {text: `Введите не менее ${inputMinLength} символов`});
             } else {
                 if (context.findValue !== inputValue || context.responseTowns.length === 0) {
                     setContext({findValue: inputValue});
-                    window.fetch(`https://api.hh.ru/suggests/areas?text=${inputValue}`)
-                        .then((response) => {
-                            if (context.findValue === inputValue) {
-                                if (response.status !== 200) {
-                                    throw new Error("Fetch error.");
-                                }
-                                return response.json();
-                            }
-                        })
-                        .then((Towns) => {
-                            setContext({responseTowns: Towns.items});
-                            setState('Active');
-                        })
-                        .catch((err) => {
-                            while (context.selectorElement.firstElementChild) {
-                                context.selectorElement.removeChild(context.selectorElement.firstElementChild);
-                            }
-                            let li = document.createElement('li');
-                            li.appendChild(document.createTextNode('Ошибка при получении данных'));
-                            li.className = context.itemClassName;
-                            context.selectorElement.appendChild(li);
-                            if (context.inputInFocus) {
-                                context.selectorElement.style.display = 'block';
-                            }
-                        });
-                } else {
-                    setState('Active');
+                    const fetchingMachine = new machine(fetchingMachineBody);
+                    fetchingMachine.transition('FETCH', {
+                        url: `https://api.hh.ru/suggests/areas?text=${inputValue}`,
+                        id: inputValue,
+                        parent: helperMachine
+                    });
                 }
             }
         },
