@@ -1,8 +1,10 @@
 import {machine, useContext, useState} from './my-state-machine.js'
+import {focusMachineBody} from "./focus-machine.js";
 
 const inputMinLength = 2;
 const inputElement = document.querySelector(".city-input");
 const selectorElement = document.querySelector(".city-selector");
+const focusMachine = new machine(focusMachineBody);
 
 const helperMachine = new machine({
     id: 'city-helper',
@@ -23,22 +25,6 @@ const helperMachine = new machine({
             on: {
                 EDIT: {
                     target: 'notActive',
-                },
-                FOCUS: {
-                    service: (event) => {
-                        const [context, setContext] = useContext();
-                        if (context.selectorElement.firstElementChild) {
-                            context.selectorElement.style.display = 'block';
-                            setContext({inputInFocus: true});
-                        }
-                    }
-                },
-                UNFOCUS: {
-                    service: (event) => {
-                        const [context, setContext] = useContext();
-                        context.selectorElement.style.display = 'none';
-                        setContext({inputInFocus: false});
-                    }
                 }
             }
         },
@@ -109,24 +95,6 @@ const helperMachine = new machine({
                             });
                             context.inputElement.value = context.selection.title;
                             setState('selected');
-                        }
-                    }
-                },
-                FOCUS: {
-                    service: (event) => {
-                        const [context, setContext] = useContext();
-                        if (context.selectorElement.firstElementChild) {
-                            context.selectorElement.style.display = 'block';
-                            setContext({inputInFocus: true});
-                        }
-                    }
-                },
-                UNFOCUS: {
-                    service: (event) => {
-                        const [context, setContext] = useContext();
-                        if (!event.target.classList.contains(context.itemClassName)) {
-                            context.selectorElement.style.display = 'none';
-                            setContext({inputInFocus: false});
                         }
                     }
                 }
@@ -223,12 +191,12 @@ const helperMachine = new machine({
 });
 
 inputElement.addEventListener('focusin', (e) => {
-    helperMachine.transition('FOCUS', e);
+    focusMachine.transition('FOCUS', {showElement: selectorElement});
 });
 
 addEventListener('click', (e) => {
     if (e.target !== inputElement) {
-        helperMachine.transition('UNFOCUS', e);
+        focusMachine.transition('UNFOCUS', {hideElement: selectorElement});
     }
 });
 
@@ -241,7 +209,7 @@ inputElement.addEventListener('keydown', (e) => {
             helperMachine.transition('UPTARGET', e);
             break;
         case 'Tab':
-            helperMachine.transition('UNFOCUS', e);
+            focusMachine.transition('UNFOCUS', {hideElement: selectorElement});
             break;
     }
 });
