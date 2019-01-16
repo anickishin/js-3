@@ -91,7 +91,7 @@ body, html {
 .city-selector {
     background-color: #fff;
     border: 1px solid #777;
-    border-radius: 0 0 5px 5px;
+    border-radius: 0 0 10px 10px;
     display: none;
     font-size: 15px;
     padding: 5px;

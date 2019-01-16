@@ -1,5 +1,6 @@
 import {machine, useContext, useState} from './my-state-machine.js'
 
+const inputMinLength = 2;
 const inputElement = document.querySelector(".city-input");
 const selectorElement = document.querySelector(".city-selector");
 
@@ -156,9 +157,9 @@ const helperMachine = new machine({
             const [context, setContext] = useContext();
             const [state, setState] = useState();
             const inputValue = context.inputElement.value;
-            if (inputValue.trim().length < 2) {
+            if (inputValue.trim().length < inputMinLength) {
                 let li = document.createElement('li');
-                li.appendChild(document.createTextNode('Введите не менее 2 символов'));
+                li.appendChild(document.createTextNode(`Введите не менее ${inputMinLength} символов`));
                 li.className = context.itemClassName;
                 context.selectorElement.appendChild(li);
                 if (context.inputInFocus) {
