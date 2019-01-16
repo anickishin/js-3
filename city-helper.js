@@ -12,7 +12,9 @@ const helperMachine = new machine({
         findValue: '',
         responseTowns: [],
         selectorTarget: '',
-        selection: ''
+        selection: '',
+        itemClassName: 'city-selector__item',
+        itemActiveClassName: 'city-selector__item_current'
     },
     states: {
         notActive: {
@@ -32,8 +34,8 @@ const helperMachine = new machine({
                 TARGETING: {
                     service: (event) => {
                         const [context, setContext] = useContext();
-                        if (event.selectorTarget.getAttribute('class') === 'city-selector__item') {
-                            event.selectorTarget.setAttribute('class', 'city-selector__item city-selector__item_current');
+                        if (event.selectorTarget.className === context.itemClassName) {
+                            event.selectorTarget.classList.add(context.itemActiveClassName);
                             setContext({selectorTarget: event.selectorTarget});
                         }
                     }
@@ -42,7 +44,7 @@ const helperMachine = new machine({
                     service: (event) => {
                         const [context, setContext] = useContext();
                         if (context.selectorTarget) {
-                            context.selectorTarget.setAttribute('class', 'city-selector__item');
+                            context.selectorTarget.classList.remove(context.itemActiveClassName);
                             setContext({selectorTarget: ''});
                         }
                     }
@@ -51,24 +53,24 @@ const helperMachine = new machine({
                     service: (event) => {
                         const [context, setContext] = useContext();
                         if (context.selectorTarget) {
-                            context.selectorTarget.setAttribute('class', 'city-selector__item');
+                            context.selectorTarget.classList.remove(context.itemActiveClassName);
                             setContext({selectorTarget: context.selectorTarget.nextElementSibling});
                         } else {
                             setContext({selectorTarget: context.selectorElement.firstElementChild});
                         }
-                        context.selectorTarget.setAttribute('class', 'city-selector__item city-selector__item_current');
+                        context.selectorTarget.classList.add(context.itemActiveClassName);
                     }
                 },
                 UPTARGET: {
                     service: (event) => {
                         const [context, setContext] = useContext();
                         if (context.selectorTarget) {
-                            context.selectorTarget.setAttribute('class', 'city-selector__item');
+                            context.selectorTarget.classList.remove(context.itemActiveClassName);
                             setContext({selectorTarget: context.selectorTarget.previousElementSibling});
                         } else {
                             setContext({selectorTarget: context.selectorElement.lastElementChild});
                         }
-                        context.selectorTarget.setAttribute('class', 'city-selector__item city-selector__item_current');
+                        context.selectorTarget.classList.add(context.itemActiveClassName);
                     }
                 },
                 CHOOSE: {
@@ -111,7 +113,7 @@ const helperMachine = new machine({
             if (context.inputElement.value.length < 2) {
                 let li = document.createElement('li');
                 li.appendChild(document.createTextNode('Введите не менее 2 символов'));
-                li.setAttribute('class', 'city-selector__item');
+                li.className = context.itemClassName;
                 context.selectorElement.appendChild(li);
                 context.selectorElement.style.display = 'block';
             } else {
@@ -141,13 +143,13 @@ const helperMachine = new machine({
                 for (let i = 0; i < context.responseTowns.length; i++) {
                     let li = document.createElement("li");
                     li.appendChild(document.createTextNode(context.responseTowns[i].text));
-                    li.setAttribute('class', 'city-selector__item');
+                    li.className = context.itemClassName;
                     context.selectorElement.appendChild(li);
                 }
             } else {
                 let li = document.createElement('li');
                 li.appendChild(document.createTextNode('Соответствий не найдено'));
-                li.setAttribute('class', 'city-selector__item');
+                li.className = context.itemClassName;
                 context.selectorElement.appendChild(li);
             }
             context.selectorElement.style.display = 'block';
