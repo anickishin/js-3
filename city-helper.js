@@ -7,7 +7,6 @@ import {listMachineBody} from "./list-machine.js";
 const inputMinLength = 2;
 const inputElement = document.querySelector(".city-input");
 const selectorElement = document.querySelector(".city-selector");
-const focusMachine = new machine(focusMachineBody);
 
 const helperMachine = new machine({
     id: 'city-helper',
@@ -46,7 +45,7 @@ const helperMachine = new machine({
             onExit(){
                 const [context, setContext] = useContext();
                 setContext({listMachine: ''});
-                focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
+                context.focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
             },
             on: {
                 EDIT: {
@@ -65,7 +64,7 @@ const helperMachine = new machine({
                 FETCH_ERROR: {
                     service: (event) => {
                         const [context, setContext] = useContext();
-                        focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
+                        context.focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
                         let listMachine = new machine(listMachineBody);
                         setContext({listMachine:listMachine});
                         listMachine.transition('INIT', {
@@ -85,7 +84,7 @@ const helperMachine = new machine({
                             setContext({inputInFocus: true});
                         }
                         if (context.inputInFocus && context.listMachine) {
-                            focusMachine.transition('FOCUS',{showElement:selectorElement});
+                            context.focusMachine.transition('FOCUS',{showElement:selectorElement});
                         }
                     }
                 },
@@ -95,7 +94,7 @@ const helperMachine = new machine({
                         if (event.hideElement) {
                             setContext({inputInFocus: false});
                         }
-                        focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
+                        context.focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
                     }
                 }
             }
@@ -103,7 +102,7 @@ const helperMachine = new machine({
         Active: {
             onEntry() {
                 const [context, setContext] = useContext();
-                focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
+                context.focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
                 let listMachine = new machine(listMachineBody);
                 setContext({listMachine: listMachine});
                 setContext({listMachine: listMachine});
@@ -119,7 +118,7 @@ const helperMachine = new machine({
             onExit(){
                 const [context, setContext] = useContext();
                 setContext({listMachine: ''});
-                focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
+                context.focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
             },
             on: {
                 EDIT: {
@@ -159,7 +158,7 @@ const helperMachine = new machine({
                             setContext({inputInFocus: true});
                         }
                         if (context.inputInFocus && context.listMachine) {
-                            focusMachine.transition('FOCUS',{showElement:selectorElement});
+                            context.focusMachine.transition('FOCUS',{showElement:selectorElement});
                         }
                     }
                 },
@@ -169,7 +168,7 @@ const helperMachine = new machine({
                         if (event.hideElement) {
                             setContext({inputInFocus: false});
                         }
-                        focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
+                        context.focusMachine.transition('UNFOCUS',{hideElement:selectorElement});
                     }
                 }
             }
