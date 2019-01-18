@@ -4,6 +4,7 @@ export const listMachineBody = {
         id: 'list',
         initialState: 'notActive',
         context: {
+            parent: '',
             list: [],
             selectorElement: '',
             itemClassName: '',
@@ -39,7 +40,6 @@ export const listMachineBody = {
                                 li.className = context.itemClassName;
                                 context.selectorElement.appendChild(li);
                             }
-                            context.parent.transition('FOCUS', {});
                             if (context.selecting) {
                                 setState('Active');
                             }

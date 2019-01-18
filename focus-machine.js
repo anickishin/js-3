@@ -1,30 +1,98 @@
-import {useState} from './my-state-machine.js'
+import {useContext, useState} from './my-state-machine.js'
 
-export const focusMachineBody = {
-    id: 'focus',
-    initialState: 'notInFocus',
-    context: {},
+export const visibleMachineBody = {
+    id: 'visible',
+    initialState: 'notInit',
+    context: {
+        element: '',
+        inFocus: false,
+        isActive: false
+    },
     states: {
-        inFocus: {
+        notInit: {
             on: {
-                UNFOCUS: {
+                INIT: {
                     service:(event) => {
-                        const [state, setState] = useState();
-                        event.hideElement.style.display = 'none';
-                        setState('notInFocus');
+                        const [context, setContext] = useContext();
+                        if (typeof event.element === 'object') {
+                            setContext({element: event.element});
+                            if (typeof event.inFocus) {
+                                setContext({inFocus: event.inFocus});
+                            } else {
+                                setContext({inFocus: false});
+                            }
+                            if (typeof event.inFocus) {
+                                setContext({isActive: event.isActive});
+                            } else {
+                                setContext({isActive: false});
+                            }
+                            const [state, setState] = useState();
+                            setState('notActive');
+                        }
                     }
                 }
             }
         },
-        notInFocus: {
+        Active: {
+            onEntry() {
+                const [context] = useContext();
+                context.element.style.display = 'block';
+            },
+            on: {
+                UNFOCUS: {
+                    service:(event) => {
+                        const [context, setContext] = useContext();
+                        setContext({inFocus: false});
+                        const [state, setState] = useState();
+                        setState('notActive');
+                    }
+                },
+                DEACTIVATE: {
+                    service:(event) => {
+                        const [context, setContext] = useContext();
+                        setContext({isActive: false});
+                        const [state, setState] = useState();
+                        setState('notActive');
+                    }
+                }
+            }
+        },
+        notActive: {
+            onEntry() {
+                const [context] = useContext();
+                context.element.style.display = 'none';
+            },
             on: {
                 FOCUS: {
                     service:(event)=>{
-                        const [state, setState] = useState();
-                        if (event.showElement.firstElementChild) {
-                            event.showElement.style.display = 'block';
-                            setState('inFocus');
+                        const [context, setContext] = useContext();
+                        setContext({inFocus: true});
+                        if (context.isActive) {
+                            const [state, setState] = useState();
+                            setState('Active');
                         }
+                    }
+                },
+                UNFOCUS: {
+                    service:(event) => {
+                        const [context, setContext] = useContext();
+                        setContext({inFocus: false});
+                    }
+                },
+                ACTIVATE: {
+                    service:(event) => {
+                        const [context, setContext] = useContext();
+                        setContext({isActive: true});
+                        if (context.inFocus) {
+                            const [state, setState] = useState();
+                            setState('Active');
+                        }
+                    }
+                },
+                DEACTIVATE: {
+                    service:(event) => {
+                        const [context, setContext] = useContext();
+                        setContext({isActive: false});
                     }
                 }
             }
