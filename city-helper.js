@@ -1,5 +1,5 @@
 import {machine, useContext, useState} from './my-state-machine.js'
-import {visibleMachineBody} from "./focus-machine.js";
+import {visibleMachineBody} from "./visible-machine.js";
 import {fetchingMachineBody} from "./fetching-machine.js";
 import {listMachineBody} from "./list-machine.js";
 
